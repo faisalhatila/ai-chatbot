@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from 'firebase/auth';
+// import { auth } from '../../../utils/firebaseConfig'; // Import your firebase config
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, firestore } from '../../../utils/firebaseConfig'; // Import your firebase config
 import AuthInput from '../ui-elements/AuthInput';
 import Button from '../ui-elements/Button';
+import { toast } from 'react-toastify';
 
 const RegisterForm = () => {
   const [values, setValues] = useState({
-    fullName:'',
+    fullName: '',
     email: '',
     password: '',
   });
   const [errors, setErrors] = useState({
-    fullName:'',
+    fullName: '',
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
   const validateForm = () => {
-    const newErrors: { email: string; password: string, fullName:string } = {
-      fullName:'',
+    const newErrors: { email: string; password: string; fullName: string } = {
+      fullName: '',
       email: '',
       password: '',
     };
@@ -54,11 +63,34 @@ const RegisterForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log({ values });
-      // Perform further actions (e.g., API calls) here
+      try {
+        const { email, password, fullName } = values;
+        setLoading(true);
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+
+        // Send verification email
+        await sendEmailVerification(user);
+        await setDoc(doc(firestore, "users", user.uid), {
+          fullName,
+          email,
+          userId: user.uid,
+        });
+        setLoading(false);
+        toast.success('Verification email sent! Please check your inbox.');
+      } catch (error) {
+        setLoading(false);
+        console.log({ error });
+        toast.error('Error during signup: ' + error);
+        // setError('Error during signup: ' + err.message);
+      }
     }
   };
   return (

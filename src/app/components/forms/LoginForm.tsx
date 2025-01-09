@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, updateDoc, getDoc } from 'firebase/firestore'; // Import your firebase config
+import { auth, firestore } from '../../../utils/firebaseConfig'; // Import your firebase config
 import AuthInput from '../ui-elements/AuthInput';
 import Button from '../ui-elements/Button';
+import { toast } from 'react-toastify';
 
 const LoginForm = () => {
   const [values, setValues] = useState({
@@ -11,6 +15,7 @@ const LoginForm = () => {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState(false);
   const validateForm = () => {
     const newErrors: { email: string; password: string } = {
       email: '',
@@ -47,10 +52,49 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
       console.log({ values });
+      try {
+        setLoading(true);
+        const { email, password } = values;
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        const user = userCredential.user;
+
+        // Check if email is verified
+        if (user.emailVerified) {
+          setLoading(false);
+          // alert('Login Successful');
+          onAuthStateChanged(auth, async (user) => {
+            if (user && user.emailVerified) {
+              const userRef = doc(firestore, 'users', user.uid);
+              const userDoc = await getDoc(userRef);
+              if (userDoc.exists() && !userDoc.data().totalAttemptsPerDay) {
+                // Add totalAttemptsPerDay and attemptsLeft
+                await updateDoc(userRef, {
+                  totalAttemptsPerDay: 10,
+                  attemptsLeft: 10,
+                  accountVerifiedAt: new Date().toISOString(),
+                });
+                console.log("User document updated with attempts.");
+              }
+            }
+          });
+          toast.success('Login Successful');
+        } else {
+          setLoading(false);
+          toast.error('Please verify your email first.');
+        }
+      } catch (err) {
+        setLoading(false);
+        console.log({ err });
+        toast.success('Error during login: ' + err);
+      }
       // Perform further actions (e.g., API calls) here
     }
   };
