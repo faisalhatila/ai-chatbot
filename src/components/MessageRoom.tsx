@@ -7,7 +7,7 @@ interface MessageRoomProps {
 const MessageRoom = ({messages}:MessageRoomProps) => {
   return (
     <div className="flex-1 px-2 pt-3">
-      <div className="h-[460px] overflow-auto">
+      <div className="h-[460px] overflow-auto flex flex-col gap-[10px]">
         {
             messages.map((msg,index) => (
                 <ChatMessage message={msg} key={index} />
