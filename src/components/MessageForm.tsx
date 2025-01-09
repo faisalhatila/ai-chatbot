@@ -12,7 +12,10 @@ const MessageForm = ({ setMessages }: MessageRoomProps) => {
     console.log({ e });
     e.preventDefault();
     // alert('Hellow world');
-    setMessages((ps: string[]) => [...ps,message])
+    setMessages((ps: string[]) => [...ps,{
+        message,
+        sendBy:'user'
+    }])
     setMessage('');
   };
   return (
