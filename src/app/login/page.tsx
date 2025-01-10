@@ -3,66 +3,9 @@ import React, { useState, SyntheticEvent } from 'react';
 import { FaGoogle, FaUser } from 'react-icons/fa';
 import LoginForm from '../components/forms/LoginForm';
 import RegisterForm from '../components/forms/RegisterForm';
-// import { useForm } from 'react-hook-form';
-// import { loginFormSchema } from '@/utils/schema';
-// import { z } from 'zod';
-// import { zodResolver } from '@hookform/resolvers/zod';
-// import AuthInput from '../components/ui-elements/AuthInput';
-// import Button from '../components/ui-elements/Button';
-// import { useFormik } from 'formik';
+
 
 const Login = () => {
-  // const [values, setValues] = useState({
-  //   email: '',
-  //   password: '',
-  // });
-  // const [errors, setErrors] = useState({
-  //   email: '',
-  //   password: '',
-  // });
-  // const validateForm = () => {
-  //   const newErrors: { email: string; password: string } = {
-  //     email: '',
-  //     password: '',
-  //   };
-  //   let isValid = true;
-
-  //   // Email validation
-  //   if (!values.email) {
-  //     newErrors.email = 'Email is required.';
-  //     isValid = false;
-  //   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-  //     newErrors.email = 'Enter a valid email address.';
-  //     isValid = false;
-  //   }
-
-  //   // Password validation
-  //   if (!values.password) {
-  //     newErrors.password = 'Password is required.';
-  //     isValid = false;
-  //   } else if (values.password.length < 6) {
-  //     newErrors.password = 'Password must be at least 6 characters.';
-  //     isValid = false;
-  //   }
-
-  //   setErrors(newErrors);
-  //   return isValid;
-  // };
-  // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setValues((ps) => ({
-  //     ...ps,
-  //     [name]: value,
-  //   }));
-  // };
-
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (validateForm()) {
-  //     console.log({ values });
-  //     // Perform further actions (e.g., API calls) here
-  //   }
-  // };
   const [activeTab, setActiveTab] = useState('Login');
   const tabs = ['Login', 'Register'];
 

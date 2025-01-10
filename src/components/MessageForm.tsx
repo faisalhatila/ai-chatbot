@@ -2,6 +2,7 @@
 import React, { useState, SetStateAction, SyntheticEvent, useRef } from 'react';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import { MessageType } from './Chatbox';
+import { useRouter} from 'next/navigation';
 
 interface MessageRoomProps {
   setMessages: SetStateAction<Function>;
@@ -20,6 +21,7 @@ const MessageForm = ({
 }: MessageRoomProps) => {
   const [text, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();

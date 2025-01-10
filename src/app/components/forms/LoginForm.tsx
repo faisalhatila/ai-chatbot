@@ -5,8 +5,10 @@ import { auth, firestore } from '../../../utils/firebaseConfig'; // Import your 
 import AuthInput from '../ui-elements/AuthInput';
 import Button from '../ui-elements/Button';
 import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 const LoginForm = () => {
+  const router = useRouter();
   const [values, setValues] = useState({
     email: '',
     password: '',
@@ -55,7 +57,6 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log({ values });
       try {
         setLoading(true);
         const { email, password } = values;
@@ -83,9 +84,11 @@ const LoginForm = () => {
                 });
                 console.log("User document updated with attempts.");
               }
+              toast.success('Login Successful');
+              router.push('/');
             }
           });
-          toast.success('Login Successful');
+          
         } else {
           setLoading(false);
           toast.error('Please verify your email first.');
