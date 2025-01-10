@@ -1,5 +1,5 @@
 import { auth, firestore } from '../utils/firebaseConfig';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 export const updateAttempts = async () => {
   try {
     const user = auth.currentUser; // Get the currently logged-in user

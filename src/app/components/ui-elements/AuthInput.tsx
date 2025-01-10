@@ -7,8 +7,8 @@ interface AuthProps {
   type: string;
   required: boolean;
   error: string;
-  // onChange:() => void;
-  onChange: any;
+  onChange:(event: React.ChangeEvent<HTMLInputElement>) => void;
+  // onChange: any;
   name: string;
 }
 
@@ -28,7 +28,6 @@ const AuthInput = ({
   label,
   placeholder,
   type,
-  required,
   error,
   onChange,
   name,

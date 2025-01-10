@@ -1,6 +1,5 @@
 'use client';
-import React, { useState, SyntheticEvent } from 'react';
-import { FaGoogle, FaUser } from 'react-icons/fa';
+import React, { useState} from 'react';
 import LoginForm from '../components/forms/LoginForm';
 import RegisterForm from '../components/forms/RegisterForm';
 import GuestLogin from '../components/forms/GuestLogin';

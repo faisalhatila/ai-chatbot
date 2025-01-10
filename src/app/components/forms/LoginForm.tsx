@@ -17,7 +17,6 @@ const LoginForm = () => {
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false);
   const validateForm = () => {
     const newErrors: { email: string; password: string } = {
       email: '',
@@ -58,7 +57,6 @@ const LoginForm = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        setLoading(true);
         const { email, password } = values;
         const userCredential = await signInWithEmailAndPassword(
           auth,
@@ -69,7 +67,6 @@ const LoginForm = () => {
 
         // Check if email is verified
         if (user.emailVerified) {
-          setLoading(false);
           // alert('Login Successful');
           onAuthStateChanged(auth, async (user) => {
             if (user && user.emailVerified) {
@@ -82,19 +79,16 @@ const LoginForm = () => {
                   attemptsLeft: 10,
                   accountVerifiedAt: new Date().toISOString(),
                 });
-                console.log("User document updated with attempts.");
+                console.log('User document updated with attempts.');
               }
               toast.success('Login Successful');
               router.push('/');
             }
           });
-          
         } else {
-          setLoading(false);
           toast.error('Please verify your email first.');
         }
       } catch (err) {
-        setLoading(false);
         console.log({ err });
         toast.success('Error during login: ' + err);
       }

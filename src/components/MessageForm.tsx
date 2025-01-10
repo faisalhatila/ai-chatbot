@@ -1,12 +1,11 @@
 'use client';
-import React, { useState, SetStateAction, SyntheticEvent, useRef } from 'react';
+import React, { SyntheticEvent, useRef } from 'react';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import { MessageType } from './Chatbox';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 
 interface MessageRoomProps {
-  setMessages: SetStateAction<Function>;
+  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>; // Explicitly typed
   generateBotResponse: (history: MessageType[]) => void;
   messagesHistory: MessageType[];
   isLoading: boolean;
@@ -20,10 +19,8 @@ const MessageForm = ({
   isLoading,
   setIsLoading,
 }: MessageRoomProps) => {
-  const [text, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const { setAttemptsLeft, attemptsLeft } = useAuth();
+  const { attemptsLeft } = useAuth();
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -65,10 +62,10 @@ const MessageForm = ({
     }, 600);
 
     // Clear message state after submit
-    setMessage('');
   };
 
-  const isInputDisabled = isLoading || attemptsLeft === 0 || attemptsLeft === null;
+  const isInputDisabled =
+    isLoading || attemptsLeft === 0 || attemptsLeft === null;
 
   return (
     <form onSubmit={handleSubmit}>

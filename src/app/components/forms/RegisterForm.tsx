@@ -21,7 +21,6 @@ const RegisterForm = () => {
     email: '',
     password: '',
   });
-  const [loading, setLoading] = useState(false);
   const validateForm = () => {
     const newErrors: { email: string; password: string; fullName: string } = {
       fullName: '',
@@ -68,7 +67,7 @@ const RegisterForm = () => {
     if (validateForm()) {
       try {
         const { email, password, fullName } = values;
-        setLoading(true);
+
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
@@ -78,15 +77,14 @@ const RegisterForm = () => {
 
         // Send verification email
         await sendEmailVerification(user);
-        await setDoc(doc(firestore, "users", user.uid), {
+        await setDoc(doc(firestore, 'users', user.uid), {
           fullName,
           email,
           userId: user.uid,
         });
-        setLoading(false);
+
         toast.success('Verification email sent! Please check your inbox.');
       } catch (error) {
-        setLoading(false);
         console.log({ error });
         toast.error('Error during signup: ' + error);
         // setError('Error during signup: ' + err.message);

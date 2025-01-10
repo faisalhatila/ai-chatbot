@@ -1,16 +1,11 @@
-
 'use client';
 import Chatbox from '@/components/Chatbox';
 import React, { useEffect, useState } from 'react';
 import { useAuth } from './context/AuthContext';
-import { useRouter } from 'next/navigation';
 import LoadingComponent from './components/ui-elements/LoadingComponent';
 
 const App = () => {
-  const router = useRouter();
-  const {
-    isAuthenticated,
-  } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 

@@ -5,7 +5,6 @@ import {
   GoogleAuthProvider,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
-import { useRouter } from 'next/navigation';
 import { FaGoogle } from 'react-icons/fa';
 import { auth, firestore } from '../../../utils/firebaseConfig';
 import { toast } from 'react-toastify';
@@ -13,8 +12,7 @@ import { useAuth } from '@/app/context/AuthContext';
 
 const GoogleLogin = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+
   const { setFullName, setAttemptsLeft } = useAuth();
 
   const googleSignIn = async () => {

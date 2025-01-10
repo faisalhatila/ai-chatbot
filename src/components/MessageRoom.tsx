@@ -10,7 +10,7 @@ interface MessageRoomProps {
   setIsLoading: (val: boolean) => void;
 }
 const MessageRoom = ({ messages, setIsLoading }: MessageRoomProps) => {
-  const messageRoomRef: any = useRef(null);
+  const messageRoomRef = useRef<HTMLDivElement>(null);
   const [isDisplayPopup, setIsDisplayPopup] = useState(false);
   useEffect(() => {
     if (messageRoomRef.current) {
