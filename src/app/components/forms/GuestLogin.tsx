@@ -4,6 +4,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { FaUser } from 'react-icons/fa';
 import { auth, firestore } from '../../../utils/firebaseConfig'; // Import your firebase config
+import { toast } from 'react-toastify';
 
 const GuestLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -37,6 +38,7 @@ const GuestLogin = () => {
       });
 
       // Step 3: Redirect to the main page after successful login
+      toast.success('Login Successful');
       router.push('/'); // Or wherever you want the user to be redirected
     } catch (err) {
       setError('An error occurred while logging in as guest.');
@@ -47,7 +49,7 @@ const GuestLogin = () => {
   };
 
   return (
-    <button onClick={handleGuestLogin} disabled={loading} className="flex items-center border border-[#888] flex-1 p-2 rounded gap-[10px]">
+    <button onClick={handleGuestLogin} disabled={loading} className="flex items-center border-2 border-[#353535] flex-1 p-2 rounded gap-[10px]">
       <FaUser />
       <p>Guest Login</p>
     </button>

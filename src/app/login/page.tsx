@@ -4,6 +4,7 @@ import { FaGoogle, FaUser } from 'react-icons/fa';
 import LoginForm from '../components/forms/LoginForm';
 import RegisterForm from '../components/forms/RegisterForm';
 import GuestLogin from '../components/forms/GuestLogin';
+import GoogleLogin from '../components/forms/GoogleLogin';
 
 
 const Login = () => {
@@ -32,10 +33,7 @@ const Login = () => {
           }
           <hr />
           <div className="flex gap-[10px] items-center">
-            <div className="flex items-center border border-[#888] flex-1 p-2 rounded gap-[10px]">
-              <FaGoogle />
-              <p>Google Auth</p>
-            </div>
+            <GoogleLogin />
             <GuestLogin />
           </div>
         </div>

@@ -1,11 +1,17 @@
 import { useAuth } from '@/app/context/AuthContext';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FaRobot, FaAngleDown } from 'react-icons/fa6';
 
 const ChatBotHeader = () => {
   const {
     attemptsLeft,
   } = useAuth();
+
+  useEffect(() => {
+    if(attemptsLeft === null ){
+      window.location.reload();
+    }
+  },[])
   return (
     <div className="bg-[#420088] flex justify-between items-center px-5 py-3">
       <div className="flex items-center gap-3">

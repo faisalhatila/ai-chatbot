@@ -39,13 +39,13 @@ const AuthInput = ({
       <label className="text-[14px]">{label}</label>
       <div
         className={`flex items-center border p-2 rounded ${
-          !!error ? 'border-red-600' : 'border-[#888]'
+          !!error ? 'border-red-600 border-2' : 'border-[#000] border-2'
         }`}
       >
         <input
           placeholder={placeholder}
           type={inputType}
-          className={`bg-transparent placeholder-[#888] text-[14px] focus:outline-none flex-1`}
+          className={`bg-transparent placeholder-[#414141] text-[14px] focus:outline-none flex-1`}
           name={name}
           onChange={onChange}
         />

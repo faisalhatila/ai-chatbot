@@ -4,6 +4,7 @@ import ChatBotHeader from './ChatBotHeader';
 import MessageRoom from './MessageRoom';
 import MessageForm from './MessageForm';
 import { useAuth } from '@/app/context/AuthContext';
+import { updateAttempts } from '@/utils/makeAttempt';
 
 export type MessageType = {
   text: string;
@@ -12,7 +13,9 @@ export type MessageType = {
 
 const Chatbox = () => {
   const {
-    fullName
+    fullName,
+    attemptsLeft,
+    setAttemptsLeft
   } = useAuth();
   const [messagesHistory, setMessagesHistory] = useState<MessageType[]>([
     {
@@ -53,6 +56,9 @@ const Chatbox = () => {
         .replace(/\*\*(.*?)\*\*/g, '$1')
         .trim();
       updateHistory(apiResponseText);
+      updateAttempts().then(() => {
+        setAttemptsLeft(attemptsLeft && attemptsLeft -1)
+      })
     } catch (error) {
       console.log({ error });
       setIsLoading(false); // Turn off loading if there was an error

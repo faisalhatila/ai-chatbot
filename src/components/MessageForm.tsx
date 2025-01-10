@@ -2,7 +2,8 @@
 import React, { useState, SetStateAction, SyntheticEvent, useRef } from 'react';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import { MessageType } from './Chatbox';
-import { useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
 
 interface MessageRoomProps {
   setMessages: SetStateAction<Function>;
@@ -17,11 +18,12 @@ const MessageForm = ({
   generateBotResponse,
   messagesHistory,
   isLoading,
-  setIsLoading
+  setIsLoading,
 }: MessageRoomProps) => {
   const [text, setMessage] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { setAttemptsLeft, attemptsLeft } = useAuth();
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -61,27 +63,39 @@ const MessageForm = ({
         { text: userMessage, role: 'user' },
       ]);
     }, 600);
-    
+
     // Clear message state after submit
     setMessage('');
   };
+
+  const isInputDisabled = isLoading || attemptsLeft === 0 || attemptsLeft === null;
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="px-5 py-2 flex justify-between items-center border rounded-[50px]">
         <input
-          key="text-input" // Add a unique key
+          key="text-input"
           className="bg-transparent flex-1 p-1 focus:outline-none"
           placeholder="Type your text"
           ref={inputRef}
-          disabled={isLoading} // Disable input field when loading
+          disabled={isInputDisabled} // Disable input based on conditions
         />
-        {!isLoading && (
+        {!isInputDisabled && ( // Hide button if input is disabled
           <button type="submit">
             <FaRegPaperPlane />
           </button>
         )}
       </div>
+      {attemptsLeft === 0 && (
+        <p className="text-red-500 text-sm mt-2 text-center">
+          You have no attempts left. Please try again later.
+        </p>
+      )}
+      {attemptsLeft === null && (
+        <p className="text-yellow-500 text-sm mt-2">
+          Attempt information is currently unavailable. Please try again later.
+        </p>
+      )}
     </form>
   );
 };
