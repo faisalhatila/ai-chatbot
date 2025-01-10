@@ -32,6 +32,7 @@ const GoogleLogin = () => {
             const twentyFourHoursInMs = 24 * 60 * 60 * 1000;
 
             if (userDoc.exists()) {
+              console.log('Exist')
               const userData = userDoc.data();
               const accountVerifiedAt = userData.accountVerifiedAt?.toDate(); // Firestore timestamp to JS Date
 
@@ -49,6 +50,7 @@ const GoogleLogin = () => {
                 }
               }
             } else {
+              console.log('New')
               // Create user document with initial data
               const fullName =
                 user?.displayName ||
@@ -66,7 +68,7 @@ const GoogleLogin = () => {
               toast.success('New user created successfully.');
             }
 
-            window.location.reload();
+            // window.location.reload();
           }
         });
       }

@@ -7,11 +7,11 @@ const ChatBotHeader = () => {
     attemptsLeft,
   } = useAuth();
 
-  useEffect(() => {
-    if(attemptsLeft === null ){
-      window.location.reload();
-    }
-  },[])
+  // useEffect(() => {
+  //   if(attemptsLeft === null ){
+  //     window.location.reload();
+  //   }
+  // },[])
   return (
     <div className="bg-[#420088] flex justify-between items-center px-5 py-3">
       <div className="flex items-center gap-3">
