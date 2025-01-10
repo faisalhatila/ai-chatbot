@@ -105,6 +105,7 @@ import { doc, getDoc } from 'firebase/firestore';
 interface AuthContextType {
   user: FirebaseUser | null;
   totalAttemptsPerDay: number | null;
+  fullName:string;
   attemptsLeft: number | null;
   accountVerifiedAt: Date | null;
   isAuthenticated: boolean;
@@ -117,6 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [totalAttemptsPerDay, setTotalAttemptsPerDay] = useState<number | null>(null);
   const [attemptsLeft, setAttemptsLeft] = useState<number | null>(null);
+  const [fullName, setFullName] = useState<string>('');
   const [accountVerifiedAt, setAccountVerifiedAt] = useState<Date | null>(null);
   const [authChecked, setAuthChecked] = useState(false); // State to ensure auth status is resolved
   const router = useRouter();
@@ -130,6 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const data = userDoc.data();
       setTotalAttemptsPerDay(data.totalAttemptsPerDay || 0);
       setAttemptsLeft(data.attemptsLeft || 0);
+      setFullName(data.fullName || '')
       setAccountVerifiedAt(data.accountVerifiedAt ? new Date(data.accountVerifiedAt) : null);
     }
   };
@@ -145,6 +148,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         setTotalAttemptsPerDay(null);
         setAttemptsLeft(null);
+        setFullName('')
         setAccountVerifiedAt(null);
         router.push('/login'); // Redirect to login if not authenticated
       }
@@ -159,6 +163,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setTotalAttemptsPerDay(null);
     setAttemptsLeft(null);
+    setFullName('')
     setAccountVerifiedAt(null);
     router.push('/login'); // Redirect to login
   };
@@ -176,6 +181,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         attemptsLeft,
         accountVerifiedAt,
         isAuthenticated: !!user,
+        fullName,
         logout,
       }}
     >

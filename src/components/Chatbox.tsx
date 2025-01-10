@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import ChatBotHeader from './ChatBotHeader';
 import MessageRoom from './MessageRoom';
 import MessageForm from './MessageForm';
+import { useAuth } from '@/app/context/AuthContext';
 
 export type MessageType = {
   text: string;
@@ -10,9 +11,12 @@ export type MessageType = {
 };
 
 const Chatbox = () => {
+  const {
+    fullName
+  } = useAuth();
   const [messagesHistory, setMessagesHistory] = useState<MessageType[]>([
     {
-      text: 'How may I help you?',
+      text: `Hi ${fullName}, How may I help you?`,
       role: 'model',
     },
   ]);
