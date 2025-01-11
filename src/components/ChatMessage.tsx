@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { MessageType } from './Chatbox';
 import { FaRobot } from 'react-icons/fa6';
+import { FaCopy, FaCheck } from 'react-icons/fa6';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 
@@ -15,12 +16,11 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
   const [displayedText, setDisplayedText] = useState('');
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
   const [isUserAtBottom, setIsUserAtBottom] = useState(true);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const animationRef = useRef<NodeJS.Timeout | null>(null);
-  const messageText = message.text || ''; // Ensure messageText is never undefined
-
-  // Detect if message contains code blocks
+  const messageText = message.text || '';
   const hasCodeBlock = messageText.includes('```');
-  
+
   useEffect(() => {
     const handleScroll = () => {
       if (messageRoomRef.current) {
@@ -34,18 +34,15 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
   }, [messageRoomRef]);
 
   useEffect(() => {
-    // Reset state when message changes
     setDisplayedText('');
     setIsAnimationComplete(false);
     
-    // Cleanup previous animation
     if (animationRef.current) {
       clearTimeout(animationRef.current);
     }
 
     if (message.role === 'model') {
       if (messageText === 'Thinking...') {
-        // Handle thinking animation
         let dotCount = 0;
         const interval = setInterval(() => {
           dotCount = (dotCount + 1) % 4;
@@ -53,7 +50,6 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
         }, 500);
         return () => clearInterval(interval);
       } else {
-        // Improved typing animation
         const animateTyping = (index: number) => {
           if (index <= messageText.length) {
             setDisplayedText(messageText.slice(0, index));
@@ -62,7 +58,6 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
               setIsAnimationComplete(true);
               setIsLoading(false);
             } else {
-              // Calculate delay based on character type
               const delay = messageText[index - 1] === '\n' ? 100 : 30;
               animationRef.current = setTimeout(() => animateTyping(index + 1), delay);
             }
@@ -77,20 +72,17 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
         };
       }
     } else {
-      // For user messages, show immediately
       setDisplayedText(messageText);
       setIsAnimationComplete(true);
     }
   }, [message, messageText, setIsLoading]);
 
-  // Syntax highlighting
   useEffect(() => {
     if (hasCodeBlock && isAnimationComplete) {
       Prism.highlightAll();
     }
   }, [hasCodeBlock, isAnimationComplete, displayedText]);
 
-  // Scroll handling
   useEffect(() => {
     if (messageRoomRef.current && isUserAtBottom) {
       messageRoomRef.current.scrollTo({
@@ -100,7 +92,48 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
     }
   }, [displayedText, isUserAtBottom]);
 
-  // Process code blocks
+  const handleCopyCode = async (code: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy code:', err);
+    }
+  };
+
+  const detectLanguage = (codeBlock: string): string => {
+    // Extract language from code fence if present (e.g., ```python)
+    const firstLine = codeBlock.split('\n')[0].trim().toLowerCase();
+    if (firstLine) {
+      // Common language aliases
+      const languageMap: { [key: string]: string } = {
+        'js': 'JavaScript',
+        'ts': 'TypeScript',
+        'py': 'Python',
+        'rb': 'Ruby',
+        'java': 'Java',
+        'cpp': 'C++',
+        'cs': 'C#',
+        'php': 'PHP',
+        'html': 'HTML',
+        'css': 'CSS',
+        'sql': 'SQL',
+        'bash': 'Bash',
+        'shell': 'Shell',
+      };
+      
+      for (const [alias, fullName] of Object.entries(languageMap)) {
+        if (firstLine.includes(alias)) {
+          return fullName;
+        }
+      }
+    }
+    
+    // Default to "Code" if language cannot be detected
+    return "Code";
+  };
+
   const renderContent = () => {
     if (!hasCodeBlock) {
       return <p className="whitespace-pre-wrap">{displayedText}</p>;
@@ -111,10 +144,31 @@ const ChatMessage = ({ message, messageRoomRef, setIsLoading }: ChatMessageProps
       if (index % 2 === 0) {
         return <p key={index} className="whitespace-pre-wrap">{segment}</p>;
       } else {
+        const language = detectLanguage(segment);
+        const codeContent = segment.replace(/^.*\n/, ''); // Remove the language identifier line
+        
         return (
-          <pre key={index} className="bg-[#2d2d2d] text-white p-4 rounded-lg overflow-auto whitespace-pre-wrap font-mono text-sm my-2">
-            <code className="language-javascript">{segment}</code>
-          </pre>
+          <div key={index} className="relative bg-[#2d2d2d] rounded-lg my-2">
+            {/* Language badge and copy button container */}
+            <div className="flex justify-between items-center px-4 py-2 bg-[#1e1e1e] rounded-t-lg border-b border-[#3d3d3d]">
+              <span className="text-sm text-gray-300">{language}</span>
+              <button
+                onClick={() => handleCopyCode(codeContent, index)}
+                className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+                title="Copy code"
+              >
+                {copiedIndex === index ? (
+                  <><FaCheck className="w-4 h-4" /> Copied!</>
+                ) : (
+                  <><FaCopy className="w-4 h-4" /> Copy</>
+                )}
+              </button>
+            </div>
+            {/* Code content */}
+            <pre className="p-4 overflow-auto whitespace-pre-wrap font-mono text-sm">
+              <code className="language-javascript">{codeContent}</code>
+            </pre>
+          </div>
         );
       }
     });
