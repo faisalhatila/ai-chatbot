@@ -4,14 +4,16 @@ import { RiLogoutCircleLine } from "react-icons/ri";
 import { FaHistory } from "react-icons/fa";
 import { AiOutlineWechat } from "react-icons/ai";
 
+interface DropdownProps {
+    openDrawer: () => void;
+}
 
 
-
-const Dropdown = () => {
+const Dropdown = ({openDrawer}:DropdownProps) => {
 
     const {logout} = useAuth()
   return (
-    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-md overflow-hidden">
+    <div className="absolute right-0 mt-2 w-48 z-[100] bg-white shadow-lg rounded-md overflow-hidden">
       <button
         className="flex items-center gap-[5px] w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
         onClick={logout}
@@ -20,7 +22,7 @@ const Dropdown = () => {
       </button>
       <button
         className="flex items-center gap-[5px] w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
-        onClick={() => alert('Chat History')}
+        onClick={openDrawer}
       >
         <FaHistory /> Chat History
       </button>
