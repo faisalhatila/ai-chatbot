@@ -3,6 +3,7 @@ import React, { SyntheticEvent, useRef } from 'react';
 import { FaRegPaperPlane } from 'react-icons/fa';
 import { MessageType } from './Chatbox';
 import { useAuth } from '@/app/context/AuthContext';
+import { ChatService } from '@/utils/ChatService';
 
 interface MessageRoomProps {
   setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>; // Explicitly typed
@@ -21,6 +22,7 @@ const MessageForm = ({
 }: MessageRoomProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { attemptsLeft } = useAuth();
+  const chatService = new ChatService();
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();

@@ -5,6 +5,9 @@ import MessageRoom from './MessageRoom';
 import MessageForm from './MessageForm';
 import { useAuth } from '@/app/context/AuthContext';
 import { updateAttempts } from '@/utils/makeAttempt';
+import { ChatService } from '@/utils/ChatService';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, firestore } from '@/utils/firebaseConfig';
 
 export type MessageType = {
   text: string;
@@ -12,11 +15,7 @@ export type MessageType = {
 };
 
 const Chatbox = () => {
-  const {
-    fullName,
-    attemptsLeft,
-    setAttemptsLeft
-  } = useAuth();
+  const { fullName, attemptsLeft, setAttemptsLeft } = useAuth();
   const [messagesHistory, setMessagesHistory] = useState<MessageType[]>([
     {
       text: `Hi ${fullName}, How may I help you?`,
@@ -26,42 +25,58 @@ const Chatbox = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const generateBotResponse = async (history: MessageType[]) => {
-    const updateHistory = (text: string) => {
-      setMessagesHistory((ps) => [
-        ...ps.filter((msg) => msg.text !== 'Thinking...'),
-        { role: 'model', text },
-      ]);
-    };
-    const formattedHistory = history.map(({ role, text }) => ({
-      role,
-      parts: [{ text }],
-    }));
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: formattedHistory }),
-    };
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (!apiUrl) {
-        throw new Error('API URL is not defined in environment variables.');
-      }
-      const response = await fetch(apiUrl, requestOptions);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error.message || 'Something went wrong!');
-      }
+    // const updateHistory = (text: string) => {
+    //   setMessagesHistory((ps) => [
+    //     ...ps.filter((msg) => msg.text !== 'Thinking...'),
+    //     { role: 'model', text },
+    //   ]);
+    // };
+    // const formattedHistory = history.map(({ role, text }) => ({
+    //   role,
+    //   parts: [{ text }],
+    // }));
+    // const requestOptions = {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ contents: formattedHistory }),
+    // };
+    // try {
+    //   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    //   if (!apiUrl) {
+    //     throw new Error('API URL is not defined in environment variables.');
+    //   }
+    //   const response = await fetch(apiUrl, requestOptions);
+    //   const data = await response.json();
+    //   if (!response.ok) {
+    //     throw new Error(data.error.message || 'Something went wrong!');
+    //   }
 
-      const apiResponseText = data.candidates[0].content.parts[0].text
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .trim();
-      updateHistory(apiResponseText);
-      updateAttempts().then(() => {
-        setAttemptsLeft(attemptsLeft && attemptsLeft -1)
-      })
-    } catch (error) {
-      console.log({ error });
-      setIsLoading(false); // Turn off loading if there was an error
+    //   const apiResponseText = data.candidates[0].content.parts[0].text
+    //     .replace(/\*\*(.*?)\*\*/g, '$1')
+    //     .trim();
+    //   updateHistory(apiResponseText);
+    //   updateAttempts().then(() => {
+    //     setAttemptsLeft(attemptsLeft && attemptsLeft -1)
+    //   })
+    // } catch (error) {
+    //   console.log({ error });
+    //   setIsLoading(false); // Turn off loading if there was an error
+    // }
+    const user = auth.currentUser;
+    if (!user) {
+      throw new Error('No authenticated user found.');
+    }
+    const userRef = doc(firestore, 'users', user.uid);
+    const userDoc = await getDoc(userRef);
+    console.log({userDoc:userDoc.get('chats')})
+    // if (userDoc.exists()) {
+    //   const chatSession = new ChatService();
+    //   await chatSession.createChatSession(user.uid, 'New Message');
+    // }
+    if (userDoc.exists()) {
+      const chatSession = new ChatService();
+      const chats = await chatSession.getRecentChats(user.uid, 10);
+      console.log({chats})
     }
   };
 
