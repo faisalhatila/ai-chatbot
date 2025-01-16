@@ -4,7 +4,6 @@ import ChatBotHeader from './ChatBotHeader';
 import MessageRoom from './MessageRoom';
 import MessageForm from './MessageForm';
 import { useAuth } from '@/app/context/AuthContext';
-import { updateAttempts } from '@/utils/makeAttempt';
 import { ChatService } from '@/utils/ChatService';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, firestore } from '@/utils/firebaseConfig';
